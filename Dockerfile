@@ -1,17 +1,27 @@
 FROM centos
-MAINTAINER vikash@gmail.com
-RUN cd /etc/yum.repos.d/
-RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
-RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
-RUN yum -y install java
-CMD /bin/bash
-RUN yum install -y httpd
-RUN yum install -y zip
-RUN yum install -y unzip
-ADD https://www.free-css.com/assets/files/free-css-templates/download/page254/photogenic.zip /var/www/html/
+
+LABEL maintainer="vikash@gmail.com"
+
+# Configure yum to use vault.centos.org for older CentOS versions
+RUN cd /etc/yum.repos.d/ && \
+    sed -i 's/mirrorlist/#mirrorlist/g' CentOS-* && \
+    sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' CentOS-*
+
+# Install necessary packages
+RUN yum -y install java httpd zip unzip && \
+    yum clean all
+
+# Download and add the zip file
+RUN curl -o /var/www/html/photogenic.zip https://www.free-css.com/assets/files/free-css-templates/download/page254/photogenic.zip
+
+# Unzip and set up the web files
 WORKDIR /var/www/html/
-RUN sh -c 'unzip -q "*.zip"'
-RUN cp -rvf photogenic/* .
-RUN rm -rf photogenic photogenic.zip
-CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
+RUN unzip -q photogenic.zip && \
+    cp -rvf photogenic/* . && \
+    rm -rf photogenic photogenic.zip
+
+# Expose necessary ports
 EXPOSE 80 22
+
+# Start Apache in the foreground
+CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
