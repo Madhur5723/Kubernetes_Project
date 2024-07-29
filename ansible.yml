@@ -10,7 +10,7 @@
         msg: "Kubectl version: {{ kubectl_version.stdout }}"
 
     - name: Test kubectl command
-      command: kubectl get nodes
+      command: kubectl get nodesg
       register: kubectl_nodes
 
     - name: Print kubectl nodes output
