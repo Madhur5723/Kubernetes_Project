@@ -1,0 +1,20 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+   name: MyImage
+spec:
+   replicas: 2
+   selector:      # tells the controller which pods to watch/belong to
+    matchLabels:
+     app: MyImage
+   template:
+      metadata:
+        labels:
+          app: MyImage
+      spec:
+       containers:
+        - name: MyImage
+          image: madhurshinde/my_docker_image
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 80
