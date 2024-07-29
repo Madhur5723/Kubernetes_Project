@@ -1,3 +1,4 @@
+---
 - hosts: all
   become: true
   tasks:
@@ -10,9 +11,31 @@
         msg: "Kubectl version: {{ kubectl_version.stdout }}"
 
     - name: Test kubectl command
-      command: kubectl get nodesg
+      command: kubectl get nodes
       register: kubectl_nodes
+      ignore_errors: yes  # To handle cases where the command might fail
 
     - name: Print kubectl nodes output
       debug:
         msg: "Kubectl nodes output: {{ kubectl_nodes.stdout }}"
+      when: kubectl_nodes is defined
+
+    - name: Create new deployment
+      command: kubectl apply -f /home/ubuntu/Deployment.yml
+      register: deployment_result
+      ignore_errors: yes  # To handle potential errors in deployment creation
+
+    - name: Print deployment result
+      debug:
+        msg: "Deployment result: {{ deployment_result.stdout }}"
+      when: deployment_result is defined
+
+    - name: Create new service
+      command: kubectl apply -f /home/ubuntu/Service.yml
+      register: service_result
+      ignore_errors: yes  # To handle potential errors in service creation
+
+    - name: Print service result
+      debug:
+        msg: "Service result: {{ service_result.stdout }}"
+      when: service_result is defined
