@@ -1,14 +1,14 @@
-kind: Service                             
+kind: Service
 apiVersion: v1
 metadata:
-  name: MyImage
+  name: myimage
   labels:
-    app: MyImage
+    app: myimage
 spec:
   ports:
-    - port: 8080                               
-      targetPort: 80                    
+    - port: 8080
+      targetPort: 80
       nodePort: 31200
   selector:
-    app: MyImage                    
-  type: LoadBalancer                   
+    app: myimage
+  type: LoadBalancer

@@ -50,13 +50,21 @@ pipeline {
         }
 
         stage('Copy File From Ansible to Kubernetes Service') {
-    steps {
-        sshagent(['kubernetes_server']) {
-            sh 'ssh -o StrictHostKeyChecking=no ubuntu@172.31.12.60 "echo Connection successful"'
-            sh 'scp -o StrictHostKeyChecking=no /var/lib/jenkins/workspace/Project/* ubuntu@172.31.12.60:/home/ubuntu'
+            steps {
+                sshagent(['kubernetes_server']) {
+                    sh 'scp -o StrictHostKeyChecking=no /var/lib/jenkins/workspace/Project/* ubuntu@172.31.12.60:/home/ubuntu'
+                }
+            }
         }
-    }
-}
 
+        stage('Kubernetes Deployment using Ansible') {
+            steps {
+                sshagent(['ansible_demo']) {
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no ubuntu@172.31.0.181 "cd /home/ubuntu && ansible-playbook ansible.yml"
+                    '''
+                }
+            }
+        }
     }
 }
