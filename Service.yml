@@ -11,4 +11,4 @@ spec:
       nodePort: 30001
   selector:
     app: myimage
-  type: LoadBalancer
+  type: NodePort
