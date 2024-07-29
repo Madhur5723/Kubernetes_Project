@@ -1,7 +1,18 @@
 - hosts: all
   become: true
-  tasks: 
-     - name: create new deployment
-       command: kubectl apply -f /home/ubuntu/Deployment.yml
-     - name: create new service
-       command: kubectl apply -f /home/ubuntu/Service.yml
+  tasks:
+    - name: Check kubectl version
+      command: kubectl version --client
+      register: kubectl_version
+
+    - name: Print kubectl version
+      debug:
+        msg: "Kubectl version: {{ kubectl_version.stdout }}"
+
+    - name: Test kubectl command
+      command: kubectl get nodes
+      register: kubectl_nodes
+
+    - name: Print kubectl nodes output
+      debug:
+        msg: "Kubectl nodes output: {{ kubectl_nodes.stdout }}"
